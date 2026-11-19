@@ -90,7 +90,11 @@ public class LdbFile implements Closeable, Iterable<Record> {
         boolean isCompressed = trailer[0] != 0;
 
         if (isCompressed) {
-            rawBlock = SnappyDecompressor.decompress(new ByteArrayInputStream(rawBlock));
+            try {
+                rawBlock = SnappyDecompressor.decompress(new ByteArrayInputStream(rawBlock));
+            } catch (Exception e) {
+                //ignore decompression when failed
+            }
         }
 
         return new Block(rawBlock, isCompressed, this, handle.getOffset());
